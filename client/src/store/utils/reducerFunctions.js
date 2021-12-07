@@ -1,3 +1,5 @@
+import produce from 'immer';
+
 export const addMessageToStore = (state, payload) => {
   const { message, sender } = payload;
   // if sender isn't null, that means the message needs to be put in a brand new convo
@@ -8,18 +10,21 @@ export const addMessageToStore = (state, payload) => {
       messages: [message],
     };
     newConvo.latestMessageText = message.text;
-    return [newConvo, ...state];
+    return produce(state, (draft) => {
+      draft.unshift(newConvo);
+      return draft;
+    })
   }
 
-  return state.map((convo) => {
-    if (convo.id === message.conversationId) {
-      convo.messages.unshift(message);
-      convo.latestMessageText = message.text;
+  return produce(state, (draft) => {
+    draft.forEach((convo, index) => {
+      if (convo.id === message.conversationId) {
+        draft[index].messages.unshift(message);
+        draft[index].latestMessageText = message.text;
+      }
       return convo;
-    } else {
-      return convo;
-    }
-  });
+    })
+  })
 };
 
 export const addOnlineUserToStore = (state, id) => {
@@ -48,33 +53,29 @@ export const removeOfflineUserFromStore = (state, id) => {
 
 export const addSearchedUsersToStore = (state, users) => {
   const currentUsers = {};
-
-  // make table of current users so we can lookup faster
-  state.forEach((convo) => {
-    currentUsers[convo.otherUser.id] = true;
-  });
-
-  const newState = [...state];
-  users.forEach((user) => {
-    // only create a fake convo if we don't already have a convo with this user
-    if (!currentUsers[user.id]) {
-      let fakeConvo = { otherUser: user, messages: [] };
-      newState.push(fakeConvo);
-    }
-  });
-
-  return newState;
+  return produce(state, (draft) => {
+    draft.forEach((convo) => {
+      currentUsers[convo.otherUser.id] = true;
+    });
+    users.forEach((user) => {
+      if (!currentUsers[user.id]) {
+        let fakeConvo = { otherUser: user, messages: [] };
+        draft.push(fakeConvo);
+      }
+    })
+    return draft;
+  })
 };
 
 export const addNewConvoToStore = (state, recipientId, message) => {
-  return state.map((convo) => {
-    if (convo.otherUser.id === recipientId) {
-      convo.id = message.conversationId;
-      convo.messages.unshift(message);
-      convo.latestMessageText = message.text;
-      return convo;
-    } else {
-      return convo;
-    }
-  });
-};
+  return produce(state, (draft) => {
+    draft.forEach((convo) => {
+      if (convo.otherUser.id === recipientId) {
+        convo.id = message.conversationId;
+        convo.messages.unshift(message);
+        convo.latestMessageText = message.text;
+      }
+        return convo
+    })
+});
+}
