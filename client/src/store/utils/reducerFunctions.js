@@ -1,5 +1,4 @@
 import produce from 'immer';
-
 export const addMessageToStore = (state, payload) => {
   const { message, sender } = payload;
   // if sender isn't null, that means the message needs to be put in a brand new convo
@@ -13,9 +12,8 @@ export const addMessageToStore = (state, payload) => {
     return produce(state, (draft) => {
       draft.unshift(newConvo);
       return draft;
-    })
+    });
   }
-
   return produce(state, (draft) => {
     draft.forEach((convo, index) => {
       if (convo.id === message.conversationId) {
@@ -23,31 +21,32 @@ export const addMessageToStore = (state, payload) => {
         draft[index].latestMessageText = message.text;
       }
       return convo;
-    })
-  })
+    });
+    return draft;
+  });
 };
 
 export const addOnlineUserToStore = (state, id) => {
-  return state.map((convo) => {
-    if (convo.otherUser.id === id) {
-      const convoCopy = { ...convo };
-      convoCopy.otherUser.online = true;
-      return convoCopy;
-    } else {
+  return produce(state, (draft) => {
+    draft.forEach((convo) => {
+      if (convo.otherUser.id === id) {
+        convo.otherUser.online = true;
+      }
       return convo;
-    }
+    });
+    return draft;
   });
 };
 
 export const removeOfflineUserFromStore = (state, id) => {
-  return state.map((convo) => {
-    if (convo.otherUser.id === id) {
-      const convoCopy = { ...convo };
-      convoCopy.otherUser.online = false;
-      return convoCopy;
-    } else {
+  return produce(state, (draft) => {
+    draft.forEach((convo) => {
+      if (convo.otherUser.id === id) {
+        convo.otherUser.online = false;
+      }
       return convo;
-    }
+    });
+    return draft;
   });
 };
 
@@ -62,7 +61,7 @@ export const addSearchedUsersToStore = (state, users) => {
         let fakeConvo = { otherUser: user, messages: [] };
         draft.push(fakeConvo);
       }
-    })
+    });
     return draft;
   })
 };
@@ -75,7 +74,7 @@ export const addNewConvoToStore = (state, recipientId, message) => {
         convo.messages.unshift(message);
         convo.latestMessageText = message.text;
       }
-        return convo
-    })
-});
-}
+      return convo
+    });
+  });
+};
