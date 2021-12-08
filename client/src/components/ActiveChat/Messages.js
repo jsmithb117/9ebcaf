@@ -5,7 +5,7 @@ import moment from "moment";
 
 const Messages = (props) => {
   const { messages, otherUser, userId } = props;
-  const sorted = [...messages].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  const sorted = [...messages].reverse().sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
   return (
     <Box>
       {sorted.map((message) => {
