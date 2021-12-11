@@ -6,9 +6,11 @@ export const addMessageToStore = (state, payload) => {
       id: message.conversationId,
       otherUser: sender,
       messages: [message],
+      notifications: 0,
     };
     newConvo.latestMessageText = message.text;
-    return [newConvo, ...state];
+    //even if sender isn't null, there may still be a 'fake convo' so state needs to be filtered
+    return [newConvo, ...state.filter((convo) => convo.otherUser.id !== sender.id)];
   }
 
   return state.map((convo) => {
@@ -79,4 +81,13 @@ export const addNewConvoToStore = (state, recipientId, message) => {
       return convo;
     }
   });
+};
+
+export const zeroNotificationsInStore = (state, conversationId, user) => {
+  const newState = state.map((convo) => {
+      const convoCopy = { ...convo };
+      convoCopy.notifications = 0;
+      return convoCopy;
+  });
+  return newState;
 };
