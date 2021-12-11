@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     container: {
       marginRight: "30px",
     },
-    unreadMessages: {
+    notifications: {
       fontSize: 13,
       color: "white",
       letterSpacing: -0.17,
@@ -40,17 +40,9 @@ const useStyles = makeStyles((theme) => ({
 
 const ChatContent = (props) => {
   const classes = useStyles();
-  const { conversation, user } = props;
-  const { latestMessageText, otherUser } = conversation;
-  const unreadMessages = conversation.messages.reduce((prev, cur) => {
-    const isUnread = cur.read === false
-    const isSender = user.id !== cur.senderId;
-    if (isUnread && isSender) {
-      return prev + 1;
-    }
-    return prev;
-  }, 0);
-
+  const { conversation } = props;
+  const { latestMessageText, otherUser, notifications } = conversation;
+  const notificationsExist = !!notifications;
   return (
     <Box className={classes.root}>
       <Grid container>
@@ -62,10 +54,10 @@ const ChatContent = (props) => {
             {latestMessageText}
           </Typography>
         </Box>
-          {unreadMessages !== 0 ?
-            <Typography className={classes.unreadMessages}>
-              {unreadMessages}
-            </Typography> : null}
+          {notificationsExist &&
+            <Typography className={classes.notifications}>
+              {notifications}
+            </Typography>}
       </Grid>
     </Box>
   );
