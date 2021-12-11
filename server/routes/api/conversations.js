@@ -49,7 +49,6 @@ router.get("/", async (req, res, next) => {
 
     for (let i = 0; i < conversations.length; i++) {
       const isUser1 = userId === conversations.user1Id;
-      const isUser2 = userId === conversations.user2Id;
       const convo = conversations[i];
       const convoJSON = convo.toJSON();
 
