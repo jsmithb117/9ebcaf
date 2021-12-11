@@ -6,7 +6,7 @@ export const addMessageToStore = (state, payload) => {
       id: message.conversationId,
       otherUser: sender,
       messages: [message],
-      notifications: 0,
+      notifications: 1,
     };
     newConvo.latestMessageText = message.text;
     //even if sender isn't null, there may still be a 'fake convo' so state needs to be filtered
