@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Chat = (props) => {
   const classes = useStyles();
-  const { conversation, user } = props;
+  const { conversation } = props;
   const { otherUser } = conversation;
 
   const handleClick = async (conversation) => {
@@ -36,7 +36,7 @@ const Chat = (props) => {
         online={otherUser.online}
         sidebar={true}
       />
-      <ChatContent conversation={conversation} user={user} />
+      <ChatContent conversation={conversation} />
     </Box>
   );
 };
@@ -49,10 +49,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.user,
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Chat);
+export default connect(null, mapDispatchToProps)(Chat);
