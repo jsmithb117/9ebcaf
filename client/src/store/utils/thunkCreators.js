@@ -5,6 +5,7 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  setNotifications,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -113,6 +114,17 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   try {
     const { data } = await axios.get(`/api/users/${searchTerm}`);
     dispatch(setSearchedUsers(data));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+//sets a conversation's 'notification' property to zero.
+export const zeroNotifications = (body, user) => async (dispatch) => {
+  try {
+      const { conversationId } = body;
+      await axios.put("/api/conversations", body);
+      dispatch(setNotifications(conversationId, user));
   } catch (error) {
     console.error(error);
   }
