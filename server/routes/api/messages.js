@@ -15,6 +15,14 @@ router.post("/", async (req, res, next) => {
     if (conversationId) {
       const read = false;
       const message = await Message.create({ senderId, text, conversationId, read });
+      const conversation = await Conversation.findOne({ where: { id: conversationId } });
+      const isUser1 = senderId === conversation.user1Id;
+      if (isUser1) {
+        conversation.increment('user2_notifications', { by: 1 });
+      } else {
+        conversation.increment('user1_notifications', { by: 1 });
+      }
+
       return res.json({ message, sender });
     }
     // if we don't have conversation id, find a conversation to make sure it doesn't already exist
@@ -28,6 +36,7 @@ router.post("/", async (req, res, next) => {
       conversation = await Conversation.create({
         user1Id: senderId,
         user2Id: recipientId,
+        user2_notifications: 1,
       });
       if (onlineUsers.includes(sender.id)) {
         sender.online = true;
