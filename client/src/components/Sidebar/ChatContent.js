@@ -63,4 +63,10 @@ const ChatContent = (props) => {
   );
 };
 
-export default ChatContent;
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChatContent);
