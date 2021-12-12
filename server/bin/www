@@ -47,6 +47,14 @@ io.on("connection", (socket) => {
     });
   });
 
+  //sends the sender of a message a signal when the recipient reads that message
+  socket.on("read-message", (data) => {
+    socket.broadcast.emit("read-message", {
+      messageId: data.messageId,
+      conversationId: data.conversationId,
+    });
+  });
+
   socket.on("logout", (id) => {
     if (onlineUsers.includes(id)) {
       userIndex = onlineUsers.indexOf(id);
