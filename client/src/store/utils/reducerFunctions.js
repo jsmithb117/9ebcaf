@@ -9,7 +9,7 @@ export const addMessageToStore = (state, payload) => {
       notifications: 0,
     };
     if (message.senderId === sender.id) {
-      newConvo.notifications = 1;
+      newConvo.notifications = 0;
     }
     newConvo.latestMessageText = message.text;
 
@@ -17,11 +17,11 @@ export const addMessageToStore = (state, payload) => {
   }
 
   return state.map((convo) => {
-    //if client is sender,
     if (convo.id === message.conversationId) {
-      const convoCopy = { ...convo };
-      convoCopy.messages = [...convo.messages, message];
-      convoCopy.notifications = convo.notifications + 1;
+      const convoCopy = {
+        ...convo,
+      };
+      convoCopy.messages.push(message)
       convoCopy.latestMessageText = message.text;
       return convoCopy;
     } else {
@@ -88,11 +88,33 @@ export const addNewConvoToStore = (state, recipientId, message) => {
   });
 };
 
-export const zeroNotificationsInStore = (state, conversationId, user) => {
-  const newState = state.map((convo) => {
+export const setNotificationsInStore = (state, conversationId, notifications) => {
+  return state.map((convo) => {
+    if (convo.id === conversationId) {
       const convoCopy = { ...convo };
-      convoCopy.notifications = 0;
+      if (notifications >= 0) {
+        convoCopy.notifications = notifications;
+      } else {
+        convoCopy.notifications += 1;
+      }
       return convoCopy;
+    }
+    return convo;
   });
-  return newState;
+};
+
+export const setMessageAsReadInStore = (state, messageId, conversationId) => {
+  return state.map((conversation) => {
+    if (conversation.id === conversationId) {
+      return conversation.messages.map((message) => {
+        if (message.id === messageId) {
+          const messageCopy = { ...message };
+          messageCopy.read = true;
+          return messageCopy;
+        }
+        return message;
+      })
+    }
+    return conversation;
+  });
 };
