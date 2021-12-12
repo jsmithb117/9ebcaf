@@ -30,7 +30,6 @@ router.post("/", async (req, res, next) => {
       conversation = await Conversation.create({
         user1Id: senderId,
         user2Id: recipientId,
-        user2_notifications: 1,
       });
       if (onlineUsers.includes(sender.id)) {
         sender.online = true;
