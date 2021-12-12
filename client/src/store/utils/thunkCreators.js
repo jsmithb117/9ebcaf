@@ -6,6 +6,7 @@ import {
   setNewMessage,
   setSearchedUsers,
   setNotifications,
+  setMessageAsRead,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -123,8 +124,26 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
 export const zeroNotifications = (body, user) => async (dispatch) => {
   try {
       const { conversationId } = body;
-      await axios.put("/api/conversations", body);
-      dispatch(setNotifications(conversationId, user));
+      dispatch(setNotifications(conversationId, user, 0));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const putMessageReadStatus = async (body) => {
+  try {
+    const response = await axios.put("/api/messages", body);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const setReadMessage = (body) => async (dispatch) => {
+  try {
+    await putMessageReadStatus(body);
+    dispatch(setMessageAsRead(body));
+    socket.emit("read-message", { conversationId: body.conversationId, messageId: body.messageId })
   } catch (error) {
     console.error(error);
   }
