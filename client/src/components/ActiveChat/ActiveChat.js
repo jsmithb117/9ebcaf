@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box } from "@material-ui/core";
 import { Input, Header, Messages } from "./index";
 import { connect } from "react-redux";
-import { zeroNotifications } from "../../store/utils/thunkCreators";
+import { setNotifications } from "../../store/conversations";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -22,16 +22,19 @@ const useStyles = makeStyles(() => ({
 }));
 
 const ActiveChat = (props) => {
-  const { zeroNotifications } = props;
+  const { setNotifications } = props;
   const classes = useStyles();
   const { user } = props;
-  const conversation = props.conversation || { notifications: 0 };
-  const notifications = conversation.notifications;
+  const conversation = useMemo(() => props.conversation || {}, [props.conversation]);
+  const notifications = conversation?.notifications || 0;
 
-  if (notifications > 0 && user?.id) {
-    const reqBody = { conversationId: conversation.id };
-    zeroNotifications(reqBody, user);
-  }
+  useEffect(() => {
+    if (notifications > 0 && user.id) {
+      const conversationId = conversation.id;
+      const notifications = 0;
+      setNotifications(conversationId, notifications);
+    }
+  }, [setNotifications, notifications, conversation, user])
 
   return (
     <Box className={classes.root}>
@@ -46,6 +49,7 @@ const ActiveChat = (props) => {
               messages={conversation.messages}
               otherUser={conversation.otherUser}
               userId={user?.id}
+              conversationId={conversation.id}
             />
             <Input
               otherUser={conversation.otherUser}
@@ -73,8 +77,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    zeroNotifications: (conversationId, user) => {
-      dispatch(zeroNotifications(conversationId, user));
+    setNotifications: (conversationId, notifications) => {
+      dispatch(setNotifications(conversationId, notifications));
     },
   };
 };
