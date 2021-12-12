@@ -4,7 +4,8 @@ import {
   addSearchedUsersToStore,
   removeOfflineUserFromStore,
   addMessageToStore,
-  zeroNotificationsInStore,
+  setNotificationsInStore,
+  setMessageAsReadInStore,
 } from "./utils/reducerFunctions";
 
 // ACTIONS
@@ -16,7 +17,8 @@ const REMOVE_OFFLINE_USER = "REMOVE_OFFLINE_USER";
 const SET_SEARCHED_USERS = "SET_SEARCHED_USERS";
 const CLEAR_SEARCHED_USERS = "CLEAR_SEARCHED_USERS";
 const ADD_CONVERSATION = "ADD_CONVERSATION";
-const ZERO_NOTIFICATIONS = "ZERO_NOTIFICATIONS";
+const SET_NOTIFICATIONS = "SET_NOTIFICATIONS";
+const SET_MESSAGE_AS_READ = "SET_MESSAGE_AS_READ";
 
 // ACTION CREATORS
 
@@ -69,10 +71,18 @@ export const addConversation = (recipientId, newMessage) => {
   };
 };
 
-export const setNotifications = (conversationId, user) => {
+export const setNotifications = (conversationId, notifications) => {
   return {
-    type: ZERO_NOTIFICATIONS,
-    payload: { conversationId, user },
+    type: SET_NOTIFICATIONS,
+    payload: { conversationId, notifications },
+  };
+};
+
+//set message.read as true when recipient reads that message
+export const setMessageAsRead = ( conversationId, messageId ) => {
+  return {
+    type: SET_MESSAGE_AS_READ,
+    payload: { conversationId, messageId},
   };
 };
 
@@ -100,12 +110,18 @@ const reducer = (state = [], action) => {
         action.payload.recipientId,
         action.payload.newMessage
       );
-    case ZERO_NOTIFICATIONS:
-      return zeroNotificationsInStore(
+    case SET_NOTIFICATIONS:
+      return setNotificationsInStore(
         state,
         action.payload.conversationId,
-        action.payload.user
+        action.payload.notifications,
       );
+      case SET_MESSAGE_AS_READ:
+        return setMessageAsReadInStore(
+          state,
+          action.payload.messageId,
+          action.payload.conversationId
+        );
     default:
       return state;
   }
