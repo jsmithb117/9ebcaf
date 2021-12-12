@@ -26,8 +26,6 @@ async function seed() {
   const santaigoConvo = await Conversation.create({
     user1Id: thomas.id,
     user2Id: santiago.id,
-    user1_notifications: 0,
-    user2_notifications: 0,
   });
 
   await Message.create({
@@ -59,8 +57,6 @@ async function seed() {
   const chiumboConvo = await Conversation.create({
     user1Id: chiumbo.id,
     user2Id: thomas.id,
-    user1_notifications: 0,
-    user2_notifications: 0,
   });
   await Message.create({
     conversationId: chiumboConvo.id,
@@ -79,8 +75,6 @@ async function seed() {
   const hualingConvo = await Conversation.create({
     user2Id: hualing.id,
     user1Id: thomas.id,
-    user1_notifications: 0,
-    user2_notifications: 0,
   });
 
   for (let i = 0; i < 11; i++) {
@@ -122,6 +116,20 @@ async function seed() {
       password: "123456",
       photoUrl:
         "https://res.cloudinary.com/dmlvthmqr/image/upload/v1607914466/messenger/9e2972c07afac45a8b03f5be3d0a796abe2e566e_ttq23y.png",
+    }),
+    User.create({
+      username: "user1",
+      email: "user1@gmail.com",
+      password: "123456",
+      photoUrl:
+        "https://rpt26-ingenuity.s3.us-west-1.amazonaws.com/instructors/3.jpg",
+    }),
+    User.create({
+      username: "user2",
+      email: "user2@gmail.com",
+      password: "123456",
+      photoUrl:
+        "https://rpt26-ingenuity.s3.us-west-1.amazonaws.com/instructors/4.jpg",
     }),
   ]);
 
