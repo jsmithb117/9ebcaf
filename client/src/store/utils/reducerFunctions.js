@@ -6,17 +6,22 @@ export const addMessageToStore = (state, payload) => {
       id: message.conversationId,
       otherUser: sender,
       messages: [message],
-      notifications: 1,
+      notifications: 0,
     };
+    if (message.senderId === sender.id) {
+      newConvo.notifications = 1;
+    }
     newConvo.latestMessageText = message.text;
-    //even if sender isn't null, there may still be a 'fake convo' so state needs to be filtered
+
     return [newConvo, ...state.filter((convo) => convo.otherUser.id !== sender.id)];
   }
 
   return state.map((convo) => {
+    //if client is sender,
     if (convo.id === message.conversationId) {
       const convoCopy = { ...convo };
       convoCopy.messages = [...convo.messages, message];
+      convoCopy.notifications = convo.notifications + 1;
       convoCopy.latestMessageText = message.text;
       return convoCopy;
     } else {
