@@ -18,7 +18,7 @@ router.get("/", async (req, res, next) => {
           user2Id: userId,
         },
       },
-      attributes: ["id", "user1Id", "user2Id", "user1_notifications", "user2_notifications"],
+      attributes: ["id"],
       order: [[Message, "createdAt", "ASC"]],
       include: [
         { model: Message, order: ["createdAt", "ASC"] },
@@ -48,7 +48,6 @@ router.get("/", async (req, res, next) => {
     });
 
     for (let i = 0; i < conversations.length; i++) {
-      const isUser1 = userId === conversations.user1Id;
       const convo = conversations[i];
       const convoJSON = convo.toJSON();
 
@@ -69,43 +68,24 @@ router.get("/", async (req, res, next) => {
       }
 
       // set properties for notification count and latest message preview
-      if (isUser1) {
-        convoJSON.notifications = conversations[i].user1_notifications;
-      } else {
-        convoJSON.notifications = conversations[i].user2_notifications;
-      }
-      const propsClientDoesntNeed = ['user1Id', 'user2Id', 'user1_notifications', 'user2_notifications'];
-      propsClientDoesntNeed.forEach((prop) => delete convoJSON[prop])
       convoJSON.latestMessageText = convoJSON.messages[convoJSON.messages.length - 1].text;
       conversations[i] = convoJSON;
-    }
 
+
+      // set latestMessagePhotoUrl.
+      let latestMessagePhotoIndex = -1;
+      convoJSON.messages.forEach((message, index) => {
+        if (message.read ) {
+          latestMessagePhotoIndex = index;
+        }
+      });
+      if (latestMessagePhotoIndex >= 0) {
+        convoJSON.messages[latestMessagePhotoIndex].otherUserPhotoUrl = convoJSON.otherUser.photoUrl
+      }
+
+
+    }
     res.json(conversations);
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.put("/", async (req, res, next) => {
-  const userId = req.user.id;
-  const { conversationId } = req.body;
-
-  try {
-    const conversation = await Conversation.findOne({
-      where: { id: conversationId }
-    });
-    const isUser1 = userId === conversation.dataValues.user1Id;
-    const isUser2 = userId === conversation.dataValues.user2Id;
-
-    if (isUser1) {
-      conversation.update({ user1_notifications: 0 },{where: {id: conversationId}});
-    } else if (isUser2) {
-      conversation.update({ user2_notifications: 0 });
-    } else {
-      res.sendStatus(404);
-      return;
-    }
-    res.sendStatus(201)
   } catch (error) {
     next(error);
   }
