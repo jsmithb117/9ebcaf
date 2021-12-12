@@ -26,8 +26,8 @@ const ActiveChat = (props) => {
   const classes = useStyles();
   const { user } = props;
   const conversation = useMemo(() => props.conversation || {}, [props.conversation]);
-  const notifications = conversation?.notifications || 0;
-
+  const notifications = conversation.notifications || 0;
+  const latestMessageReadId = conversation.latestMessageReadId;
   useEffect(() => {
     if (notifications > 0 && user.id) {
       const conversationId = conversation.id;
@@ -50,6 +50,7 @@ const ActiveChat = (props) => {
               otherUser={conversation.otherUser}
               userId={user?.id}
               conversationId={conversation.id}
+              latestMessageReadId={latestMessageReadId}
             />
             <Input
               otherUser={conversation.otherUser}
