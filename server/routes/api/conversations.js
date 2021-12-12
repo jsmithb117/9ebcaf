@@ -68,22 +68,22 @@ router.get("/", async (req, res, next) => {
       }
 
       // set properties for notification count and latest message preview
-      convoJSON.latestMessageText = convoJSON.messages[convoJSON.messages.length - 1].text;
-      conversations[i] = convoJSON;
-
-
-      // set latestMessagePhotoUrl.
+      //count notifications while searching for most recent read message
       let latestMessagePhotoIndex = -1;
+      convoJSON.notifications = 0;
       convoJSON.messages.forEach((message, index) => {
-        if (message.read ) {
+        if (message.read) {
           latestMessagePhotoIndex = index;
+        } else if (message.senderId !== userId) {
+          convoJSON.notifications += 1;
         }
       });
+
       if (latestMessagePhotoIndex >= 0) {
         convoJSON.messages[latestMessagePhotoIndex].otherUserPhotoUrl = convoJSON.otherUser.photoUrl
       }
-
-
+      convoJSON.latestMessageText = convoJSON.messages[convoJSON.messages.length - 1].text;
+      conversations[i] = convoJSON;
     }
     res.json(conversations);
   } catch (error) {
