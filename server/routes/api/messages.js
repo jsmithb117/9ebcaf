@@ -16,12 +16,6 @@ router.post("/", async (req, res, next) => {
       const read = false;
       const message = await Message.create({ senderId, text, conversationId, read });
       const conversation = await Conversation.findOne({ where: { id: conversationId } });
-      const isUser1 = senderId === conversation.user1Id;
-      if (isUser1) {
-        conversation.increment('user2_notifications', { by: 1 });
-      } else {
-        conversation.increment('user1_notifications', { by: 1 });
-      }
 
       return res.json({ message, sender });
     }
@@ -49,6 +43,20 @@ router.post("/", async (req, res, next) => {
       read: false,
     });
     res.json({ message, sender });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put("/", async (req, res, next) => {
+  const userId = req.user.id;
+  const { messageId } = req.body;
+  try {
+    await Message.update(
+      { read: true },
+      { where: { id: messageId } },
+    );
+    res.sendStatus(200)
   } catch (error) {
     next(error);
   }
