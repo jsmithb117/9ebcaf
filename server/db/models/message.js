@@ -14,6 +14,10 @@ const Message = db.define("message", {
     type: Sequelize.BOOLEAN,
     allowNull: false,
   },
+  otherUserPhotoUrl: {
+    type: Sequelize.STRING,
+    allowNull: true,
+  }
 });
 
 module.exports = Message;
