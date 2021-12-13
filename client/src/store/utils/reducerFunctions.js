@@ -107,6 +107,7 @@ export const setMessageAsReadInStore = (state, conversationId, messageId) => {
   return state.map((conversation) => {
     if (conversation.id === conversationId) {
       const convoCopy = { ...conversation };
+      convoCopy.latestMessageReadId = messageId;
       convoCopy.messages = convoCopy.messages.map((message) => {
         if (message.id === messageId) {
           const messageCopy = { ...message };
@@ -125,7 +126,9 @@ export const setMostRecentReadMessageInStore = (state, conversationId, messageId
   return state.map((conversation) => {
     if(conversation.id === conversationId) {
       const convoCopy = { ...conversation };
-      convoCopy.latestMessageReadId = messageId;
+      if (messageId > convoCopy.latestMessageReadId) {
+        convoCopy.latestMessageReadId = messageId;
+      }
       return convoCopy;
     }
     return conversation;
