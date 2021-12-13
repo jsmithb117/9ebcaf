@@ -13,10 +13,6 @@ const Message = db.define("message", {
   read: {
     type: Sequelize.BOOLEAN,
     allowNull: false,
-  },
-  otherUserPhotoUrl: {
-    type: Sequelize.STRING,
-    allowNull: true,
   }
 });
 
