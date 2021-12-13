@@ -72,7 +72,7 @@ router.get("/", async (req, res, next) => {
       let latestMessageId = 0;
       convoJSON.notifications = 0;
       convoJSON.messages.forEach((message) => {
-        if (!message.read) {
+        if (message.read) {
           latestMessageId = message.id;
         } else if (message.senderId !== userId) {
           convoJSON.notifications += 1;
