@@ -103,18 +103,31 @@ export const setNotificationsInStore = (state, conversationId, notifications) =>
   });
 };
 
-export const setMessageAsReadInStore = (state, messageId, conversationId) => {
+export const setMessageAsReadInStore = (state, conversationId, messageId) => {
   return state.map((conversation) => {
     if (conversation.id === conversationId) {
-      return conversation.messages.map((message) => {
+      const convoCopy = { ...conversation };
+      convoCopy.messages = convoCopy.messages.map((message) => {
         if (message.id === messageId) {
           const messageCopy = { ...message };
           messageCopy.read = true;
           return messageCopy;
         }
         return message;
-      })
+      });
+      return convoCopy;
     }
     return conversation;
   });
 };
+
+export const setMostRecentReadMessageInStore = (state, conversationId, messageId) => {
+  return state.map((conversation) => {
+    if(conversation.id === conversationId) {
+      const convoCopy = { ...conversation };
+      convoCopy.latestMessageReadId = messageId;
+      return convoCopy;
+    }
+    return conversation;
+  });
+}
