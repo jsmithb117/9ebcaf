@@ -6,6 +6,7 @@ import {
   addOnlineUser,
   setMessageAsRead,
   setNotifications,
+  setMostRecentReadMessage
 } from "./store/conversations";
 
 const socket = io(window.location.origin);
@@ -27,7 +28,9 @@ socket.on("connect", () => {
   });
 
   socket.on("read-message", (data) => {
-    store.dispatch(setMessageAsRead(data.messageId, data.conversationId));
+    const { conversationId, messageId } = data;
+    store.dispatch(setMostRecentReadMessage(conversationId, messageId))
+    store.dispatch(setMessageAsRead(conversationId, messageId));
   });
 });
 
