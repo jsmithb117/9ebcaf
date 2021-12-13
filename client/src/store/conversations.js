@@ -6,6 +6,7 @@ import {
   addMessageToStore,
   setNotificationsInStore,
   setMessageAsReadInStore,
+  setMostRecentReadMessageInStore,
 } from "./utils/reducerFunctions";
 
 // ACTIONS
@@ -19,6 +20,7 @@ const CLEAR_SEARCHED_USERS = "CLEAR_SEARCHED_USERS";
 const ADD_CONVERSATION = "ADD_CONVERSATION";
 const SET_NOTIFICATIONS = "SET_NOTIFICATIONS";
 const SET_MESSAGE_AS_READ = "SET_MESSAGE_AS_READ";
+const SET_CONVO_RECENT_MSG ="SET_CONVO_RECENT_MSG";
 
 // ACTION CREATORS
 
@@ -82,7 +84,14 @@ export const setNotifications = (conversationId, notifications) => {
 export const setMessageAsRead = ( conversationId, messageId ) => {
   return {
     type: SET_MESSAGE_AS_READ,
-    payload: { conversationId, messageId},
+    payload: { conversationId, messageId },
+  };
+};
+
+export const setMostRecentReadMessage = (conversationId, messageId) => {
+  return {
+    type: SET_CONVO_RECENT_MSG,
+    payload: { conversationId, messageId },
   };
 };
 
@@ -108,7 +117,7 @@ const reducer = (state = [], action) => {
       return addNewConvoToStore(
         state,
         action.payload.recipientId,
-        action.payload.newMessage
+        action.payload.newMessage,
       );
     case SET_NOTIFICATIONS:
       return setNotificationsInStore(
@@ -119,9 +128,15 @@ const reducer = (state = [], action) => {
       case SET_MESSAGE_AS_READ:
         return setMessageAsReadInStore(
           state,
+          action.payload.conversationId,
           action.payload.messageId,
-          action.payload.conversationId
         );
+      case SET_CONVO_RECENT_MSG:
+        return setMostRecentReadMessageInStore(
+          state,
+          action.payload.conversationId,
+          action.payload.messageId,
+        )
     default:
       return state;
   }
