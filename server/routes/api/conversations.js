@@ -71,8 +71,8 @@ router.get("/", async (req, res, next) => {
       //count notifications while searching for most recently read message
       let latestMessageId = 0;
       convoJSON.notifications = 0;
-      convoJSON.messages.forEach((message, index) => {
-        if (message.read) {
+      convoJSON.messages.forEach((message) => {
+        if (!message.read) {
           latestMessageId = message.id;
         } else if (message.senderId !== userId) {
           convoJSON.notifications += 1;
