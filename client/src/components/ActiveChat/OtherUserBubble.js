@@ -1,8 +1,6 @@
 import React from "react";
-import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box, Typography, Avatar } from "@material-ui/core";
-import { setReadMessage } from '../../store/utils/thunkCreators';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -35,11 +33,7 @@ const useStyles = makeStyles(() => ({
 
 const OtherUserBubble = (props) => {
   const classes = useStyles();
-  const { text, time, otherUser, messageId, messageIsRead, conversationId, setReadMessage } = props;
-
-  if(!messageIsRead) {
-    setReadMessage({ conversationId, messageId });
-  }
+  const { text, time, otherUser } = props;
 
   return (
     <Box className={classes.root}>
@@ -56,15 +50,4 @@ const OtherUserBubble = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setReadMessage: (ids) => {
-      dispatch(setReadMessage(ids));
-    },
-  };
-};
-
-export default connect(null, mapDispatchToProps)(OtherUserBubble);
-
-
-// export default OtherUserBubble;
+export default OtherUserBubble;
