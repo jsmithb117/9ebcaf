@@ -103,13 +103,20 @@ export const setNotificationsInStore = (state, conversationId, notifications) =>
   });
 };
 
-export const setMessageAsReadInStore = (state, conversationId, messageId) => {
+export const setMessagesAsReadInStore = (state, conversationId, newlyReadMessageIds) => {
   return state.map((conversation) => {
     if (conversation.id === conversationId) {
+      const messageIdsLookup = {};
+      // make table of message ids so we can lookup faster
+      newlyReadMessageIds.forEach((message) => {
+        messageIdsLookup[message.id] = true;
+      });
+
       const convoCopy = { ...conversation };
-      convoCopy.latestMessageReadId = messageId;
+      const lastIndex = newlyReadMessageIds.length - 1;
+      convoCopy.latestMessageReadId = newlyReadMessageIds[lastIndex];
       convoCopy.messages = convoCopy.messages.map((message) => {
-        if (message.id === messageId) {
+        if (messageIdsLookup[message.id]) {
           const messageCopy = { ...message };
           messageCopy.read = true;
           return messageCopy;
@@ -124,7 +131,7 @@ export const setMessageAsReadInStore = (state, conversationId, messageId) => {
 
 export const setMostRecentReadMessageInStore = (state, conversationId, messageId) => {
   return state.map((conversation) => {
-    if(conversation.id === conversationId) {
+    if (conversation.id === conversationId) {
       const convoCopy = { ...conversation };
       if (messageId > convoCopy.latestMessageReadId) {
         convoCopy.latestMessageReadId = messageId;
