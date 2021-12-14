@@ -6,7 +6,7 @@ import {
   setNewMessage,
   setSearchedUsers,
   setNotifications,
-  setMessageAsRead,
+  setMessagesAsRead,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -120,17 +120,7 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   }
 };
 
-//sets a conversation's 'notification' property to zero.
-export const zeroNotifications = (body, user) => async (dispatch) => {
-  try {
-      const { conversationId } = body;
-      dispatch(setNotifications(conversationId, user, 0));
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const putMessageReadStatus = async (body) => {
+const putMessagesReadStatus = async (body) => {
   try {
     const response = await axios.put("/api/messages", body);
     return response;
@@ -139,11 +129,12 @@ const putMessageReadStatus = async (body) => {
   }
 };
 
-export const setReadMessage = (body) => async (dispatch) => {
+export const handleReadMessages = (body) => async (dispatch) => {
   try {
-    await putMessageReadStatus(body);
-    dispatch(setMessageAsRead(body));
-    socket.emit("read-message", { conversationId: body.conversationId, messageId: body.messageId })
+    const { conversationId, newlyReadMessageIds } = body;
+    await putMessagesReadStatus(body);
+    dispatch(setMessagesAsRead({ body }));
+    socket.emit("read-messages", body)
   } catch (error) {
     console.error(error);
   }
