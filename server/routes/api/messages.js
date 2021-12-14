@@ -46,13 +46,17 @@ router.post("/", async (req, res, next) => {
 
 router.put("/", async (req, res, next) => {
   const userId = req.user.id;
-  const { messageId } = req.body;
+  const { newlyReadMessageIds } = req.body;
   try {
-    await Message.update(
-      { read: true },
-      { where: { id: messageId } },
-    );
-    res.sendStatus(200)
+    const promises = [];
+    newlyReadMessageIds.forEach((messageId) => {
+      promises.push(Message.update(
+        { read: true },
+        { where: { id: messageId } },
+      ));
+    });
+    await Promise.all(promises);
+    res.sendStatus(200);
   } catch (error) {
     next(error);
   }
