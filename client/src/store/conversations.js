@@ -5,7 +5,7 @@ import {
   removeOfflineUserFromStore,
   addMessageToStore,
   setNotificationsInStore,
-  setMessageAsReadInStore,
+  setMessagesAsReadInStore,
   setMostRecentReadMessageInStore,
 } from "./utils/reducerFunctions";
 
@@ -19,7 +19,7 @@ const SET_SEARCHED_USERS = "SET_SEARCHED_USERS";
 const CLEAR_SEARCHED_USERS = "CLEAR_SEARCHED_USERS";
 const ADD_CONVERSATION = "ADD_CONVERSATION";
 const SET_NOTIFICATIONS = "SET_NOTIFICATIONS";
-const SET_MESSAGE_AS_READ = "SET_MESSAGE_AS_READ";
+const SET_MESSAGES_AS_READ = "SET_MESSAGES_AS_READ";
 const SET_CONVO_RECENT_MSG ="SET_CONVO_RECENT_MSG";
 
 // ACTION CREATORS
@@ -81,10 +81,10 @@ export const setNotifications = (conversationId, notifications) => {
 };
 
 //set message.read as true when recipient reads that message
-export const setMessageAsRead = ( conversationId, messageId ) => {
+export const setMessagesAsRead = ( conversationId, newlyReadMessageIds ) => {
   return {
-    type: SET_MESSAGE_AS_READ,
-    payload: { conversationId, messageId },
+    type: SET_MESSAGES_AS_READ,
+    payload: { conversationId, newlyReadMessageIds },
   };
 };
 
@@ -125,11 +125,11 @@ const reducer = (state = [], action) => {
         action.payload.conversationId,
         action.payload.notifications,
       );
-      case SET_MESSAGE_AS_READ:
-        return setMessageAsReadInStore(
+      case SET_MESSAGES_AS_READ:
+        return setMessagesAsReadInStore(
           state,
           action.payload.conversationId,
-          action.payload.messageId,
+          action.payload.newlyReadMessageIds,
         );
       case SET_CONVO_RECENT_MSG:
         return setMostRecentReadMessageInStore(
