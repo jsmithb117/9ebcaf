@@ -4,7 +4,7 @@ import {
   setNewMessage,
   removeOfflineUser,
   addOnlineUser,
-  setMessageAsRead,
+  setMessagesAsRead,
   setNotifications,
   setMostRecentReadMessage
 } from "./store/conversations";
@@ -27,10 +27,12 @@ socket.on("connect", () => {
     store.dispatch(setNotifications(data.message.conversationId, notifications))
   });
 
-  socket.on("read-message", (data) => {
-    const { conversationId, messageId } = data;
-    store.dispatch(setMostRecentReadMessage(conversationId, messageId))
-    store.dispatch(setMessageAsRead(conversationId, messageId));
+  socket.on("read-messages", (data) => {
+    const { conversationId, newlyReadMessageIds } = data;
+    const lastIndex = newlyReadMessageIds.length - 1;
+    const mostRecentMessageId = newlyReadMessageIds[lastIndex];
+    store.dispatch(setMostRecentReadMessage(conversationId, mostRecentMessageId))
+    store.dispatch(setMessagesAsRead(conversationId, newlyReadMessageIds));
   });
 });
 
