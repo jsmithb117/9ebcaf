@@ -5,7 +5,6 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
-  setNotifications,
   setMessagesAsRead,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
@@ -129,12 +128,14 @@ const putMessagesReadStatus = async (body) => {
   }
 };
 
-export const handleReadMessages = (body) => async (dispatch) => {
+export const handleReadMessages = (body, calledFromSocket) => async (dispatch) => {
   try {
     const { conversationId, newlyReadMessageIds } = body;
-    await putMessagesReadStatus(body);
-    dispatch(setMessagesAsRead({ body }));
-    socket.emit("read-messages", body)
+    if (!calledFromSocket) {
+      await putMessagesReadStatus(body);
+      socket.emit("read-messages", { conversationId, newlyReadMessageIds });
+    }
+    dispatch(setMessagesAsRead(conversationId, newlyReadMessageIds));
   } catch (error) {
     console.error(error);
   }
