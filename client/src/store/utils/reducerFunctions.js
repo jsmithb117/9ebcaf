@@ -109,7 +109,7 @@ export const setMessagesAsReadInStore = (state, conversationId, newlyReadMessage
       const messageIdsLookup = {};
       // make table of message ids so we can lookup faster
       newlyReadMessageIds.forEach((message) => {
-        messageIdsLookup[message.id] = true;
+        messageIdsLookup[message] = true;
       });
 
       const convoCopy = { ...conversation };
