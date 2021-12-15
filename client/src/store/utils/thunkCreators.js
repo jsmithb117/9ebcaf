@@ -128,7 +128,7 @@ const putMessagesReadStatus = async (body) => {
   }
 };
 
-export const handleReadMessages = (body, calledFromSocket) => async (dispatch) => {
+export const handleReadMessages = (body, calledFromSocket = false) => async (dispatch) => {
   try {
     const { conversationId, newlyReadMessageIds } = body;
     if (!calledFromSocket) {
