@@ -10,6 +10,11 @@ const bob = {
   email: "bob@example.com",
   password: "L%e$xZHC4QKP@F",
 };
+const catherine = {
+  username: "Catherine",
+  email: "catherine@example.com",
+  password: "123456",
+};
 
 describe("Bug Fix: Sending Messages", () => {
   it("setup", () => {
@@ -32,6 +37,11 @@ describe("Bug Fix: Sending Messages", () => {
     cy.contains("First message");
     cy.contains("Second message");
     cy.contains("Third message");
+
+    cy.get("input[name=search]").type("Catherine");
+    cy.contains("Catherine").click();
+
+    cy.get("input[name=text]").type("The fourth message, but not 'Fourth message'{enter}");
   });
 
   it("displays messages in correct order", () => {
@@ -51,6 +61,21 @@ describe("Bug Fix: Sending Messages", () => {
       cy.wrap($list).children().eq(1).should("contain", "Second message");
       cy.wrap($list).children().eq(2).should("contain", "Third message");
     });
+
+    it("displays conversations in correct order", () => {
+      cy.reload();
+      cy.login(alice.username, alice.password);
+      //Select the conversation list DOM by finding the closest common ancestor
+      //between two conversations.
+      const $firstConversation = Cypress.$(':contains("Catherine")');
+      const $secondConversation = Cypress.$(':contains("Bob")');
+      const $list = $firstConversation.parents().has($secondConversation).first();
+
+      //verify conversation ordering
+      cy.wrap($list).children().eq(0).should("contain", "Catherine");
+      cy.wrap($list).children().eq(1).should("contain", "Bob");
+    })
+
   });
 
   it("sends message in an existing conversation", () => {
