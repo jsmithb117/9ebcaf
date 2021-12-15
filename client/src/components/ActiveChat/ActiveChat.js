@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Box } from "@material-ui/core";
 import { Input, Header, Messages } from "./index";
 import { connect } from "react-redux";
-import { setNotifications } from "../../store/conversations";
+import { setNotifications, setMostRecentReadMessage } from "../../store/conversations";
 import { handleReadMessages } from '../../store/utils/thunkCreators';
 
 const useStyles = makeStyles(() => ({
@@ -22,42 +22,59 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const ActiveChat = (props) => {
-  const { setNotifications } = props;
-  const classes = useStyles();
-  const { user, handleReadMessages } = props;
-  const userId = user.id;
-  const conversation = useMemo(() => props.conversation || {}, [props.conversation]);
-  const notifications = conversation.notifications || 0;
-  const [latestMessageReadId, setLatestMessageReadId] = useState(conversation.latestMessageReadId || 0);
-  const messages = conversation.messages || [];
-  const latestMessageId = messages[messages.length - 1]?.id;
-
-  useEffect(() => {
-    const conversationId = conversation.id;
-    if (notifications > 0 && userId) {
-      const notifications = 0;
-      setNotifications(conversationId, notifications);
+const findLatestMessageId = (newlyReadMessageIds, messages, userId) => {
+  const latestMessageId = messages.reduce((latestMessageId, message) => {
+    if (message.senderId !== userId && message.id >= latestMessageId) {
+      latestMessageId = message.id;
     }
-  }, [setNotifications, notifications, conversation, userId]);
+    return latestMessageId;
+  }, 0);
+  return latestMessageId;
+};
+
+const ActiveChat = (props) => {
+  const { setNotifications, user, handleReadMessages } = props;
+  const classes = useStyles();
+  const userId = user.id;
+  const conversation = useMemo(() => props.conversation || { messages: [] }, [props.conversation]);
+  const [notifications, setNotificationsState] = useState(conversation.notifications || 0);
+  const messages = conversation.messages;
+  const conversationId = conversation.id;
+  const [latestMessageReceivedId, setLatestMessageReceivedId] = useState(conversation.latestMessageReadId || 0);
 
   useEffect(() => {
-    if (latestMessageReadId <= latestMessageId) {
-    const conversationId = conversation.id;
-    const messages = conversation.messages;
-      const newlyReadMessageIds = [];
-      messages.forEach((message) => {
-        if (!message.read && message.senderId !== userId) {
+    if (conversation.notifications > 0 && conversation.id) {
+      setNotifications(conversation.id, 0);
+      setNotificationsState(0);
+  }
+  }, [conversation, setNotifications]);
+
+
+  useEffect(() => {
+    const renderingUnreadMessages = messages.reduce((hasUnreadMessages, message) => {
+      if (!message.read && message.senderId !== userId) {
+        hasUnreadMessages = true;
+      }
+      return hasUnreadMessages;
+    }, false);
+    if (renderingUnreadMessages) {
+      const newlyReadMessageIds = messages.reduce((newlyReadMessageIds, message) => {
+        if (message.senderId !== userId && !message.read) {
           newlyReadMessageIds.push(message.id);
         }
-      });
-      if (newlyReadMessageIds.length > 0) {
-        setLatestMessageReadId(latestMessageId);
-        handleReadMessages({ conversationId, newlyReadMessageIds });
-      }
-    }
-  }, [latestMessageReadId, latestMessageId, conversation, userId]);
+        return newlyReadMessageIds;
+      }, []);
 
+      const latestMessageReadId = findLatestMessageId(newlyReadMessageIds, messages, userId);
+      handleReadMessages({ conversationId, newlyReadMessageIds });
+      setLatestMessageReceivedId(latestMessageReadId);
+      setMostRecentReadMessage(latestMessageReadId);
+    }
+  }, [messages, userId, handleReadMessages, conversationId, notifications, conversation])
+
+  useEffect(() => {
+    setLatestMessageReceivedId(conversation.latestMessageReadId);
+  }, [setLatestMessageReceivedId, conversation.latestMessageReadId]);
 
   return (
     <Box className={classes.root}>
@@ -72,7 +89,7 @@ const ActiveChat = (props) => {
               messages={conversation.messages}
               otherUser={conversation.otherUser}
               userId={user?.id}
-              latestMessageReadId={latestMessageReadId}
+              latestMessageReadId={latestMessageReceivedId}
             />
             <Input
               otherUser={conversation.otherUser}
@@ -105,6 +122,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     handleReadMessages: (conversationId, newlyReadMessageIds) => {
       dispatch(handleReadMessages(conversationId, newlyReadMessageIds));
+    },
+    setMostRecentReadMessage: (messageId) => {
+      dispatch(setMostRecentReadMessage(messageId));
     },
   };
 };
