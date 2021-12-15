@@ -22,6 +22,8 @@ describe("Bug Fix: Sending Messages", () => {
     cy.logout();
     cy.signup(bob.username, bob.email, bob.password);
     cy.logout();
+    cy.signup(catherine.username, catherine.email, catherine.password);
+    cy.logout();
   });
 
   it("sends message in a new conversation", () => {
@@ -37,6 +39,9 @@ describe("Bug Fix: Sending Messages", () => {
     cy.contains("First message");
     cy.contains("Second message");
     cy.contains("Third message");
+
+    cy.logout();
+    cy.login(alice.username, alice.password);
 
     cy.get("input[name=search]").type("Catherine");
     cy.contains("Catherine").click();
