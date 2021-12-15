@@ -4,10 +4,10 @@ import {
   setNewMessage,
   removeOfflineUser,
   addOnlineUser,
-  setMessagesAsRead,
   setNotifications,
   setMostRecentReadMessage
 } from "./store/conversations";
+import { handleReadMessages } from "./store/utils/thunkCreators";
 
 const socket = io(window.location.origin);
 
@@ -32,7 +32,7 @@ socket.on("connect", () => {
     const lastIndex = newlyReadMessageIds.length - 1;
     const mostRecentMessageId = newlyReadMessageIds[lastIndex];
     store.dispatch(setMostRecentReadMessage(conversationId, mostRecentMessageId))
-    store.dispatch(setMessagesAsRead(conversationId, newlyReadMessageIds));
+    store.dispatch(handleReadMessages({ conversationId, newlyReadMessageIds }, true));
   });
 });
 
