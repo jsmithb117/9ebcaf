@@ -5,7 +5,8 @@ import moment from "moment";
 
 const Messages = (props) => {
   const { messages, otherUser, userId, latestMessageReadId } = props;
-  const [latestMessageId, setLatestMessageId] = useState(null);
+  const [latestMessageId, setLatestMessageId] = useState(latestMessageReadId);
+
   useEffect(() => {
     setLatestMessageId(latestMessageReadId);
   }, [latestMessageReadId]);
