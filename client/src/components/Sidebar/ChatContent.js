@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Grid } from "@material-ui/core";
+import { Badge, Box, Typography, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 
@@ -11,32 +11,22 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 20,
     position: "relative",
   },
-    username: {
-      fontWeight: "bold",
-      letterSpacing: -0.2,
-    },
-    previewText: {
-      fontWeight: "bold",
-      fontSize: 12,
-      color: "black",
-      letterSpacing: -0.17,
-    },
-    container: {
-      marginRight: "30px",
-    },
-    notifications: {
-      fontSize: 13,
-      color: "white",
-      letterSpacing: -0.17,
-      marginLeft: "10px",
-      textAlign: "center",
-      transform: "translateY(50%)",
-      borderRadius: "120px",
-      background: "#3F92FF",
-      width: "25px",
-      height: "55%",
-      lineHeight: "25px",
-    }
+  username: {
+    fontWeight: "bold",
+    letterSpacing: -0.2,
+  },
+  previewText: {
+    fontWeight: "bold",
+    fontSize: 12,
+    color: "black",
+    letterSpacing: -0.17,
+  },
+  container: {
+    marginRight: "30px",
+  },
+  badge: {
+    transform: "translate(400%, 50%)",
+  },
 }));
 
 const ChatContent = (props) => {
@@ -55,10 +45,14 @@ const ChatContent = (props) => {
             {latestMessageText}
           </Typography>
         </Box>
-          {notificationsExist &&
-            <Typography className={classes.notifications}>
-              {notifications}
-            </Typography>}
+        {notifications > 0 && (
+          <Badge
+            classes={{ badge: `${classes.badge}` }}
+            color="primary"
+            max={99}
+            badgeContent={notifications}
+          />
+        )}
       </Grid>
     </Box>
   );
