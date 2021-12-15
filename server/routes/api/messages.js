@@ -56,7 +56,7 @@ router.put("/", async (req, res, next) => {
       ));
     });
     await Promise.all(promises);
-    res.sendStatus(200);
+    res.sendStatus(204);
   } catch (error) {
     next(error);
   }
