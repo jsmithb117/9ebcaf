@@ -54,6 +54,7 @@ const ChatContent = (props) => {
         </Box>
         {unreadMessageCount > 0 && (
           <Badge
+          id="unread-message-count"
             classes={{ badge: `${classes.badge}` }}
             color="primary"
             max={99}
