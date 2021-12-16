@@ -45,9 +45,19 @@ router.post("/", async (req, res, next) => {
 });
 
 router.put("/", async (req, res, next) => {
-  const userId = req.user.id;
-  const { newlyReadMessageIds } = req.body;
   try {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
+    const { conversationId, newlyReadMessageIds } = req.body;
+    const userId = req.user.id;
+    const conversation = await Conversation.findConversationById(conversationId);
+    const userIsAuthorized = userId !== conversation.user1Id && userId !== conversation.user2Id;
+    if (!userIsAuthorized) {
+      res.sendStatus(403);
+    }
+
+    const userId = req.user.id;
     const promises = [];
     newlyReadMessageIds.forEach((messageId) => {
       promises.push(Message.update(
