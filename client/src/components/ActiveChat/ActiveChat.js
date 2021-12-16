@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Box } from "@material-ui/core";
 import { Input, Header, Messages } from "./index";
 import { connect } from "react-redux";
-import { setNotifications, setMostRecentReadMessage } from "../../store/conversations";
+import { setUnreadMessageCount, setMostRecentReadMessage } from "../../store/conversations";
 import { handleReadMessages } from '../../store/utils/thunkCreators';
 
 const useStyles = makeStyles(() => ({
@@ -33,21 +33,21 @@ const findLatestMessageId = (newlyReadMessageIds, messages, userId) => {
 };
 
 const ActiveChat = (props) => {
-  const { setNotifications, user, handleReadMessages } = props;
+  const { setUnreadMessageCount, user, handleReadMessages } = props;
   const classes = useStyles();
   const userId = user.id;
   const conversation = useMemo(() => props.conversation || { messages: [] }, [props.conversation]);
-  const [notifications, setNotificationsState] = useState(conversation.notifications || 0);
+  const [unreadMessageCount, setUnreadMessageCountState] = useState(conversation.unreadMessageCount || 0);
   const messages = conversation.messages;
   const conversationId = conversation.id;
   const [latestMessageReceivedId, setLatestMessageReceivedId] = useState(conversation.latestMessageReadId || 0);
 
   useEffect(() => {
-    if (conversation.notifications > 0 && conversation.id) {
-      setNotifications(conversation.id, 0);
-      setNotificationsState(0);
+    if (conversation.unreadMessageCount > 0 && conversation.id) {
+      setUnreadMessageCount(conversation.id, 0);
+      setUnreadMessageCountState(0);
   }
-  }, [conversation, setNotifications]);
+  }, [conversation, setUnreadMessageCount]);
 
 
   useEffect(() => {
@@ -70,7 +70,7 @@ const ActiveChat = (props) => {
       setLatestMessageReceivedId(latestMessageReadId);
       setMostRecentReadMessage(latestMessageReadId);
     }
-  }, [messages, userId, handleReadMessages, conversationId, notifications, conversation])
+  }, [messages, userId, handleReadMessages, conversationId, unreadMessageCount, conversation])
 
   useEffect(() => {
     setLatestMessageReceivedId(conversation.latestMessageReadId);
@@ -117,8 +117,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setNotifications: (conversationId, notifications) => {
-      dispatch(setNotifications(conversationId, notifications));
+    setUnreadMessageCount: (conversationId, unreadMessageCount) => {
+      dispatch(setUnreadMessageCount(conversationId, unreadMessageCount));
     },
     handleReadMessages: (conversationId, newlyReadMessageIds) => {
       dispatch(handleReadMessages(conversationId, newlyReadMessageIds));

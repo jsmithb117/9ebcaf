@@ -4,7 +4,7 @@ import {
   setNewMessage,
   removeOfflineUser,
   addOnlineUser,
-  setNotifications,
+  setUnreadMessageCount,
   setMostRecentReadMessage
 } from "./store/conversations";
 import { handleReadMessages } from "./store/utils/thunkCreators";
@@ -23,8 +23,8 @@ socket.on("connect", () => {
   });
   socket.on("new-message", (data) => {
     store.dispatch(setNewMessage(data.message, data.sender));
-    const notifications = -1;
-    store.dispatch(setNotifications(data.message.conversationId, notifications))
+    const unreadMessageCount = -1;
+    store.dispatch(setUnreadMessageCount(data.message.conversationId, unreadMessageCount))
   });
 
   socket.on("read-messages", (data) => {

@@ -4,7 +4,7 @@ import {
   addSearchedUsersToStore,
   removeOfflineUserFromStore,
   addMessageToStore,
-  setNotificationsInStore,
+  setUnreadMessagesCountInStore,
   setMessagesAsReadInStore,
   setMostRecentReadMessageInStore,
 } from "./utils/reducerFunctions";
@@ -18,7 +18,7 @@ const REMOVE_OFFLINE_USER = "REMOVE_OFFLINE_USER";
 const SET_SEARCHED_USERS = "SET_SEARCHED_USERS";
 const CLEAR_SEARCHED_USERS = "CLEAR_SEARCHED_USERS";
 const ADD_CONVERSATION = "ADD_CONVERSATION";
-const SET_NOTIFICATIONS = "SET_NOTIFICATIONS";
+const SET_UNREAD_MESSAGE_COUNT = "SET_UNREAD_MESSAGE_COUNT";
 const SET_MESSAGES_AS_READ = "SET_MESSAGES_AS_READ";
 const SET_CONVO_RECENT_MSG ="SET_CONVO_RECENT_MSG";
 
@@ -73,10 +73,10 @@ export const addConversation = (recipientId, newMessage) => {
   };
 };
 
-export const setNotifications = (conversationId, notifications) => {
+export const setUnreadMessageCount = (conversationId, unreadMessageCount) => {
   return {
-    type: SET_NOTIFICATIONS,
-    payload: { conversationId, notifications },
+    type: SET_UNREAD_MESSAGE_COUNT,
+    payload: { conversationId, unreadMessageCount },
   };
 };
 
@@ -119,11 +119,11 @@ const reducer = (state = [], action) => {
         action.payload.recipientId,
         action.payload.newMessage,
       );
-    case SET_NOTIFICATIONS:
-      return setNotificationsInStore(
+    case SET_UNREAD_MESSAGE_COUNT:
+      return setUnreadMessagesCountInStore(
         state,
         action.payload.conversationId,
-        action.payload.notifications,
+        action.payload.unreadMessageCount,
       );
       case SET_MESSAGES_AS_READ:
         return setMessagesAsReadInStore(

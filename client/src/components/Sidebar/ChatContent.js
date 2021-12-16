@@ -37,9 +37,9 @@ const useStyles = makeStyles((theme) => ({
 const ChatContent = (props) => {
   const classes = useStyles();
   const { conversation } = props;
-  const { latestMessageText, otherUser, notifications } = conversation;
-  const notificationsExist = !!notifications;
-  const latestMessageClass = notificationsExist ? `${classes.previewText} ${classes.previewTextUnread}` : classes.previewText;
+  const { latestMessageText, otherUser, unreadMessageCount } = conversation;
+  const unreadMessagesExist = !!unreadMessageCount;
+  const latestMessageClass = unreadMessagesExist ? `${classes.previewText} ${classes.previewTextUnread}` : classes.previewText;
 
   return (
     <Box className={classes.root}>
@@ -52,12 +52,12 @@ const ChatContent = (props) => {
             {latestMessageText}
           </Typography>
         </Box>
-        {notifications > 0 && (
+        {unreadMessageCount > 0 && (
           <Badge
             classes={{ badge: `${classes.badge}` }}
             color="primary"
             max={99}
-            badgeContent={notifications}
+            badgeContent={unreadMessageCount}
           />
         )}
       </Grid>
