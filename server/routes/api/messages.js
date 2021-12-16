@@ -57,7 +57,6 @@ router.put("/", async (req, res, next) => {
       res.sendStatus(403);
     }
 
-    const userId = req.user.id;
     const promises = [];
     newlyReadMessageIds.forEach((messageId) => {
       promises.push(Message.update(
