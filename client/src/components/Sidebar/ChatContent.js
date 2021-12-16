@@ -16,15 +16,20 @@ const useStyles = makeStyles((theme) => ({
     letterSpacing: -0.2,
   },
   previewText: {
-    fontWeight: "bold",
     fontSize: 12,
-    color: "black",
+    color: "grey",
     letterSpacing: -0.17,
+  },
+  previewTextUnread: {
+    fontWeight: "bold",
+    color: "black",
   },
   container: {
     marginRight: "30px",
   },
   badge: {
+    fontWeight: "bold",
+    fontSize: 10,
     transform: "translate(400%, 50%)",
   },
 }));
@@ -34,6 +39,8 @@ const ChatContent = (props) => {
   const { conversation } = props;
   const { latestMessageText, otherUser, notifications } = conversation;
   const notificationsExist = !!notifications;
+  const latestMessageClass = notificationsExist ? `${classes.previewText} ${classes.previewTextUnread}` : classes.previewText;
+
   return (
     <Box className={classes.root}>
       <Grid container>
@@ -41,7 +48,7 @@ const ChatContent = (props) => {
           <Typography className={classes.username}>
             {otherUser.username}
           </Typography>
-          <Typography className={classes.previewText}>
+          <Typography className={latestMessageClass}>
             {latestMessageText}
           </Typography>
         </Box>
