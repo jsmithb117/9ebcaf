@@ -54,7 +54,7 @@ router.put("/", async (req, res, next) => {
     const conversation = await Conversation.findConversationById(conversationId);
     const userIsAuthorized = userId !== conversation.user1Id && userId !== conversation.user2Id;
     if (!userIsAuthorized) {
-      res.sendStatus(403);
+      return res.sendStatus(403);
     }
 
     const promises = [];
