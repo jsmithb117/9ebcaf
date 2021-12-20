@@ -3,6 +3,7 @@ import { FormControl, FilledInput } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import { postMessage } from "../../store/utils/thunkCreators";
+import { sendTypingStatus } from "../../store/utils/thunkCreators";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -39,10 +40,16 @@ const Input = (props) => {
     setText("");
   };
 
+  const handleTypingStatus = (status) => {
+    sendTypingStatus(status, otherUser.id);
+  };
+
   return (
     <form className={classes.root} onSubmit={handleSubmit}>
       <FormControl fullWidth hiddenLabel>
         <FilledInput
+          onFocus={() => handleTypingStatus(true)}
+          onBlur={() => handleTypingStatus(false)}
           classes={{ root: classes.input }}
           disableUnderline
           placeholder="Type something..."
