@@ -138,4 +138,4 @@ export const setMostRecentReadMessageInStore = (state, conversationId, messageId
     }
     return conversation;
   });
-}
+};

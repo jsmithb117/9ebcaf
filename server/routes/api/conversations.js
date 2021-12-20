@@ -21,7 +21,7 @@ router.get("/", async (req, res, next) => {
       attributes: ["id"],
       order: [[Message, "createdAt", "ASC"]],
       include: [
-        { model: Message, order: ["createdAt", "ASC"] },
+        { model: Message },
         {
           model: User,
           as: "user1",
@@ -47,8 +47,9 @@ router.get("/", async (req, res, next) => {
       ],
     });
 
-    for (let i = 0; i < conversations.length; i++) {
-      const convo = conversations[i];
+    const newConversations = [];
+    while (conversations.length > 0) {
+      const convo = conversations.pop();
       const convoJSON = convo.toJSON();
 
       // set a property "otherUser" so that frontend will have easier access
