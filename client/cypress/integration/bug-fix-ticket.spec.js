@@ -13,7 +13,7 @@ const bob = {
 const catherine = {
   username: "Catherine",
   email: "catherine@example.com",
-  password: "123456",
+  password: "L%e$xZfLTarZ9U",
 };
 
 describe("Bug Fix: Sending Messages", () => {
