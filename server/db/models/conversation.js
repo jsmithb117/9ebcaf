@@ -30,7 +30,6 @@ Conversation.findConversationById = async function (conversationId) {
     }
   });
 
-  // return conversation or null if it doesn't exist
   return conversation;
 };
 
