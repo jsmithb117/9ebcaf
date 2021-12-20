@@ -52,7 +52,7 @@ router.put("/", async (req, res, next) => {
     const { conversationId, newlyReadMessageIds } = req.body;
     const userId = req.user.id;
     const conversation = await Conversation.findConversationById(conversationId);
-    const userIsAuthorized = userId !== conversation.user1Id && userId !== conversation.user2Id;
+    const userIsAuthorized = userId === conversation.user1Id || userId === conversation.user2Id;
     if (!userIsAuthorized) {
       return res.sendStatus(403);
     }
