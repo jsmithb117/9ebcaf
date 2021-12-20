@@ -81,9 +81,9 @@ router.get("/", async (req, res, next) => {
       //sets latest message preview text using the latest message id
       convoJSON.latestMessageReadId = latestMessageId;
       convoJSON.latestMessageText = convoJSON.messages[convoJSON.messages.length - 1].text;
-      conversations[i] = convoJSON;
+      newConversations.push(convoJSON);
     }
-    res.json(conversations);
+    res.json(newConversations);
   } catch (error) {
     next(error);
   }
