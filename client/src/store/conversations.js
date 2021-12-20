@@ -4,6 +4,9 @@ import {
   addSearchedUsersToStore,
   removeOfflineUserFromStore,
   addMessageToStore,
+  setUnreadMessagesCountInStore,
+  setMessagesAsReadInStore,
+  setMostRecentReadMessageInStore,
 } from "./utils/reducerFunctions";
 
 // ACTIONS
@@ -15,6 +18,9 @@ const REMOVE_OFFLINE_USER = "REMOVE_OFFLINE_USER";
 const SET_SEARCHED_USERS = "SET_SEARCHED_USERS";
 const CLEAR_SEARCHED_USERS = "CLEAR_SEARCHED_USERS";
 const ADD_CONVERSATION = "ADD_CONVERSATION";
+const SET_UNREAD_MESSAGE_COUNT = "SET_UNREAD_MESSAGE_COUNT";
+const SET_MESSAGES_AS_READ = "SET_MESSAGES_AS_READ";
+const SET_CONVO_RECENT_MSG ="SET_CONVO_RECENT_MSG";
 
 // ACTION CREATORS
 
@@ -67,6 +73,28 @@ export const addConversation = (recipientId, newMessage) => {
   };
 };
 
+export const setUnreadMessageCount = (conversationId, unreadMessageCount) => {
+  return {
+    type: SET_UNREAD_MESSAGE_COUNT,
+    payload: { conversationId, unreadMessageCount },
+  };
+};
+
+//set message.read as true when recipient reads that message
+export const setMessagesAsRead = ( conversationId, newlyReadMessageIds ) => {
+  return {
+    type: SET_MESSAGES_AS_READ,
+    payload: { conversationId, newlyReadMessageIds },
+  };
+};
+
+export const setMostRecentReadMessage = (conversationId, messageId) => {
+  return {
+    type: SET_CONVO_RECENT_MSG,
+    payload: { conversationId, messageId },
+  };
+};
+
 // REDUCER
 
 const reducer = (state = [], action) => {
@@ -89,8 +117,26 @@ const reducer = (state = [], action) => {
       return addNewConvoToStore(
         state,
         action.payload.recipientId,
-        action.payload.newMessage
+        action.payload.newMessage,
       );
+    case SET_UNREAD_MESSAGE_COUNT:
+      return setUnreadMessagesCountInStore(
+        state,
+        action.payload.conversationId,
+        action.payload.unreadMessageCount,
+      );
+      case SET_MESSAGES_AS_READ:
+        return setMessagesAsReadInStore(
+          state,
+          action.payload.conversationId,
+          action.payload.newlyReadMessageIds,
+        );
+      case SET_CONVO_RECENT_MSG:
+        return setMostRecentReadMessageInStore(
+          state,
+          action.payload.conversationId,
+          action.payload.messageId,
+        )
     default:
       return state;
   }

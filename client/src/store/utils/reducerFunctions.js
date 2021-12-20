@@ -6,15 +6,20 @@ export const addMessageToStore = (state, payload) => {
       id: message.conversationId,
       otherUser: sender,
       messages: [message],
+      unreadMessageCount: 0,
     };
+    if (message.senderId === sender.id) {
+      newConvo.unreadMessageCount = 0;
+    }
     newConvo.latestMessageText = message.text;
-    return [newConvo, ...state];
+
+    return [newConvo, ...state.filter((convo) => convo.otherUser.id !== sender.id)];
   }
 
   return state.map((convo) => {
     if (convo.id === message.conversationId) {
       const convoCopy = { ...convo };
-      convoCopy.messages = [...convo.messages, message];
+      convoCopy.messages = [...convoCopy.messages, message];
       convoCopy.latestMessageText = message.text;
       return convoCopy;
     } else {
@@ -78,5 +83,59 @@ export const addNewConvoToStore = (state, recipientId, message) => {
     } else {
       return convo;
     }
+  });
+};
+
+export const setUnreadMessagesCountInStore = (state, conversationId, unreadMessageCount) => {
+  return state.map((convo) => {
+    if (convo.id === conversationId) {
+      const convoCopy = { ...convo };
+      if (unreadMessageCount >= 0) {
+        convoCopy.unreadMessageCount = unreadMessageCount;
+      } else {
+        convoCopy.unreadMessageCount += 1;
+      }
+      return convoCopy;
+    }
+    return convo;
+  });
+};
+
+export const setMessagesAsReadInStore = (state, conversationId, newlyReadMessageIds) => {
+  return state.map((conversation) => {
+    if (conversation.id === conversationId) {
+      const messageIdsLookup = {};
+      // make table of message ids so we can lookup faster
+      newlyReadMessageIds.forEach((message) => {
+        messageIdsLookup[message] = true;
+      });
+
+      const convoCopy = { ...conversation };
+      const lastIndex = newlyReadMessageIds.length - 1;
+      convoCopy.latestMessageReadId = newlyReadMessageIds[lastIndex];
+      convoCopy.messages = convoCopy.messages.map((message) => {
+        if (messageIdsLookup[message.id]) {
+          const messageCopy = { ...message };
+          messageCopy.read = true;
+          return messageCopy;
+        }
+        return message;
+      });
+      return convoCopy;
+    }
+    return conversation;
+  });
+};
+
+export const setMostRecentReadMessageInStore = (state, conversationId, messageId) => {
+  return state.map((conversation) => {
+    if (conversation.id === conversationId) {
+      const convoCopy = { ...conversation };
+      if (messageId > convoCopy.latestMessageReadId) {
+        convoCopy.latestMessageReadId = messageId;
+      }
+      return convoCopy;
+    }
+    return conversation;
   });
 };

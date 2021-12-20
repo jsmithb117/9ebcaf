@@ -32,16 +32,19 @@ async function seed() {
     conversationId: santaigoConvo.id,
     senderId: santiago.id,
     text: "Where are you from?",
+    read: false,
   });
   await Message.create({
     conversationId: santaigoConvo.id,
     senderId: thomas.id,
     text: "I'm from New York",
+    read: false,
   });
   await Message.create({
     conversationId: santaigoConvo.id,
     senderId: santiago.id,
     text: "Share photo of your city, please",
+    read: false,
   });
 
   const chiumbo = await User.create({
@@ -59,6 +62,7 @@ async function seed() {
     conversationId: chiumboConvo.id,
     senderId: chiumbo.id,
     text: "Sure! What time?",
+    read: false,
   });
 
   const hualing = await User.create({
@@ -78,6 +82,7 @@ async function seed() {
       conversationId: hualingConvo.id,
       senderId: hualing.id,
       text: "a test message",
+      read: false,
     });
   }
 
@@ -85,6 +90,7 @@ async function seed() {
     conversationId: hualingConvo.id,
     senderId: hualing.id,
     text: "😂 😂 😂",
+    read: false,
   });
 
   const otherUsers = await Promise.all([
@@ -110,6 +116,20 @@ async function seed() {
       password: "123456",
       photoUrl:
         "https://res.cloudinary.com/dmlvthmqr/image/upload/v1607914466/messenger/9e2972c07afac45a8b03f5be3d0a796abe2e566e_ttq23y.png",
+    }),
+    User.create({
+      username: "user1",
+      email: "user1@gmail.com",
+      password: "123456",
+      photoUrl:
+        "https://rpt26-ingenuity.s3.us-west-1.amazonaws.com/instructors/3.jpg",
+    }),
+    User.create({
+      username: "user2",
+      email: "user2@gmail.com",
+      password: "123456",
+      photoUrl:
+        "https://rpt26-ingenuity.s3.us-west-1.amazonaws.com/instructors/4.jpg",
     }),
   ]);
 

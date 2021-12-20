@@ -14,6 +14,7 @@ router.post("/", async (req, res, next) => {
     // if we already know conversation id, we can save time and just add it to message and return
     if (conversationId) {
       const message = await Message.create({ senderId, text, conversationId });
+
       return res.json({ message, sender });
     }
     // if we don't have conversation id, find a conversation to make sure it doesn't already exist
@@ -38,6 +39,33 @@ router.post("/", async (req, res, next) => {
       conversationId: conversation.id,
     });
     res.json({ message, sender });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put("/", async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
+    const { conversationId, newlyReadMessageIds } = req.body;
+    const userId = req.user.id;
+    const conversation = await Conversation.findConversationById(conversationId);
+    const userIsNotAuthorized = userId !== conversation.user1Id && userId !== conversation.user2Id;
+    if (userIsNotAuthorized) {
+      return res.sendStatus(403);
+    }
+
+    const promises = [];
+    newlyReadMessageIds.forEach((messageId) => {
+      promises.push(Message.update(
+        { read: true },
+        { where: { id: messageId } },
+      ));
+    });
+    await Promise.all(promises);
+    res.sendStatus(204);
   } catch (error) {
     next(error);
   }
