@@ -22,6 +22,7 @@ export const fetchUser = () => async (dispatch) => {
   dispatch(setFetchingStatus(true));
   try {
     const { data } = await axios.get("/auth/user");
+    data.typing = false;
     dispatch(gotUser(data));
     if (data.id) {
       socket.emit("go-online", data.id);
@@ -137,4 +138,8 @@ export const handleReadMessages = (body, calledFromSocket = false) => async (dis
   } catch (error) {
     console.error(error);
   }
+};
+
+export const sendTypingStatus = (status, recipientId) => {
+  socket.emit("typing", { status, recipientId });
 };
