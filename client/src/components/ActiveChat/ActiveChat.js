@@ -1,16 +1,22 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, {useState,
+  useEffect,
+  useMemo
+} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box } from "@material-ui/core";
 import { Input, Header, Messages } from "./index";
 import { connect } from "react-redux";
-import { setUnreadMessageCount, setMostRecentReadMessage } from "../../store/conversations";
-import { handleReadMessages } from '../../store/utils/thunkCreators';
+import {
+  setUnreadMessageCount,
+  setMostRecentReadMessage,
+} from "../../store/conversations";
+import { handleReadMessages } from "../../store/utils/thunkCreators";
 
 const useStyles = makeStyles(() => ({
   root: {
     display: "flex",
     flexGrow: 8,
-    flexDirection: "column",
+    flexDirection: "column"
   },
   chatContainer: {
     marginLeft: 41,
@@ -18,8 +24,8 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     flexDirection: "column",
     flexGrow: 1,
-    justifyContent: "space-between",
-  },
+    justifyContent: "space-between"
+  }
 }));
 
 const findLatestMessageId = (newlyReadMessageIds, messages, userId) => {
@@ -33,13 +39,14 @@ const findLatestMessageId = (newlyReadMessageIds, messages, userId) => {
 };
 
 const ActiveChat = (props) => {
-  const { setUnreadMessageCount, user, handleReadMessages } = props;
   const classes = useStyles();
+  const { setUnreadMessageCount, user, handleReadMessages } = props;
   const userId = user.id;
-  const conversation = useMemo(() => props.conversation || { messages: [] }, [props.conversation]);
-  const [unreadMessageCount, setUnreadMessageCountState] = useState(conversation.unreadMessageCount || 0);
-  const messages = conversation.messages;
+  const conversation = useMemo(() => (props.conversation || {}), [props.conversation]);
   const conversationId = conversation.id;
+  const [unreadMessageCount, setUnreadMessageCountState] = useState(conversation.unreadMessageCount || 0);
+  const propMessages = useMemo(() => (props?.conversation?.messages || []), [props.conversation]);
+  const [messages, setMessages] = useState(propMessages);
   const [latestMessageReceivedId, setLatestMessageReceivedId] = useState(conversation.latestMessageReadId || 0);
 
   useEffect(() => {
@@ -48,7 +55,6 @@ const ActiveChat = (props) => {
       setUnreadMessageCountState(0);
   }
   }, [conversation, setUnreadMessageCount]);
-
 
   useEffect(() => {
     const renderingUnreadMessages = messages.reduce((hasUnreadMessages, message) => {
@@ -70,11 +76,27 @@ const ActiveChat = (props) => {
       setLatestMessageReceivedId(latestMessageReadId);
       setMostRecentReadMessage(latestMessageReadId);
     }
-  }, [messages, userId, handleReadMessages, conversationId, unreadMessageCount, conversation])
+    }, [messages, userId, handleReadMessages, conversationId, unreadMessageCount, conversation,]);
 
   useEffect(() => {
     setLatestMessageReceivedId(conversation.latestMessageReadId);
   }, [setLatestMessageReceivedId, conversation.latestMessageReadId]);
+
+  useEffect(() => {
+    if (conversation?.otherUser?.typing === true && propMessages) {
+      const typingMessage = {
+        id: 0,
+        conversationId,
+        createdAt: new Date(),
+        senderId: conversation.otherUser.id,
+        text: '...',
+        read: true,
+      };
+      setMessages([...propMessages, typingMessage]);
+    } else {
+      setMessages(propMessages);
+    }
+  }, [propMessages, conversation]);
 
   return (
     <Box className={classes.root}>
@@ -86,10 +108,10 @@ const ActiveChat = (props) => {
           />
           <Box className={classes.chatContainer}>
             <Messages
-              messages={conversation.messages}
+              messages={messages}
               otherUser={conversation.otherUser}
-              userId={user?.id}
-              latestMessageReadId={latestMessageReceivedId}
+              userId={userId}
+              latestMessageReceivedId={latestMessageReceivedId}
             />
             <Input
               otherUser={conversation.otherUser}

@@ -52,6 +52,10 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("read-messages", data);
   });
 
+  socket.on("typing", (data) => {
+    socket.broadcast.emit("typing", data);
+  });
+
   socket.on("logout", (id) => {
     if (onlineUsers.includes(id)) {
       userIndex = onlineUsers.indexOf(id);

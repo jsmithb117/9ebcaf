@@ -7,6 +7,8 @@ import {
   setUnreadMessagesCountInStore,
   setMessagesAsReadInStore,
   setMostRecentReadMessageInStore,
+  saveLatestMessageText,
+  saveOtherUserTyping,
 } from "./utils/reducerFunctions";
 
 // ACTIONS
@@ -20,7 +22,9 @@ const CLEAR_SEARCHED_USERS = "CLEAR_SEARCHED_USERS";
 const ADD_CONVERSATION = "ADD_CONVERSATION";
 const SET_UNREAD_MESSAGE_COUNT = "SET_UNREAD_MESSAGE_COUNT";
 const SET_MESSAGES_AS_READ = "SET_MESSAGES_AS_READ";
-const SET_CONVO_RECENT_MSG ="SET_CONVO_RECENT_MSG";
+const SET_CONVO_RECENT_MSG = "SET_CONVO_RECENT_MSG";
+const SET_LATEST_TEXT = "SET_LATEST_TEXT";
+const SET_OTHER_USER_TYPING = "SET_OTHER_USER_TYPING";
 
 // ACTION CREATORS
 
@@ -81,7 +85,7 @@ export const setUnreadMessageCount = (conversationId, unreadMessageCount) => {
 };
 
 //set message.read as true when recipient reads that message
-export const setMessagesAsRead = ( conversationId, newlyReadMessageIds ) => {
+export const setMessagesAsRead = (conversationId, newlyReadMessageIds) => {
   return {
     type: SET_MESSAGES_AS_READ,
     payload: { conversationId, newlyReadMessageIds },
@@ -92,6 +96,23 @@ export const setMostRecentReadMessage = (conversationId, messageId) => {
   return {
     type: SET_CONVO_RECENT_MSG,
     payload: { conversationId, messageId },
+  };
+};
+
+export const setLatestMessageText = (senderId, setAsTyping) => {
+  return {
+    type: SET_LATEST_TEXT,
+    payload: {
+      senderId,
+      setAsTyping,
+    },
+  };
+};
+
+export const setOtherUserTyping = (recipientId, status, conversationId, senderId) => {
+  return {
+    type: SET_OTHER_USER_TYPING,
+    payload: { recipientId, status, conversationId, senderId },
   };
 };
 
@@ -125,18 +146,23 @@ const reducer = (state = [], action) => {
         action.payload.conversationId,
         action.payload.unreadMessageCount,
       );
-      case SET_MESSAGES_AS_READ:
-        return setMessagesAsReadInStore(
-          state,
-          action.payload.conversationId,
-          action.payload.newlyReadMessageIds,
-        );
-      case SET_CONVO_RECENT_MSG:
-        return setMostRecentReadMessageInStore(
-          state,
-          action.payload.conversationId,
-          action.payload.messageId,
-        )
+    case SET_MESSAGES_AS_READ:
+      return setMessagesAsReadInStore(
+        state,
+        action.payload.conversationId,
+        action.payload.newlyReadMessageIds,
+      );
+    case SET_CONVO_RECENT_MSG:
+      return setMostRecentReadMessageInStore(
+        state,
+        action.payload.conversationId,
+        action.payload.messageId,
+      );
+    case SET_LATEST_TEXT:
+      return saveLatestMessageText(state, action.payload);
+    case SET_OTHER_USER_TYPING:
+      const newState = saveOtherUserTyping(state, action.payload);
+      return newState;
     default:
       return state;
   }

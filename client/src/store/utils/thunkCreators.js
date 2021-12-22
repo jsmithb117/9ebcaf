@@ -22,6 +22,7 @@ export const fetchUser = () => async (dispatch) => {
   dispatch(setFetchingStatus(true));
   try {
     const { data } = await axios.get("/auth/user");
+    data.typing = false;
     dispatch(gotUser(data));
     if (data.id) {
       socket.emit("go-online", data.id);
@@ -97,13 +98,11 @@ const sendMessage = (data, body) => {
 export const postMessage = (body) => async (dispatch) => {
   try {
     const data = await saveMessage(body);
-
     if (!body.conversationId) {
       dispatch(addConversation(body.recipientId, data.message));
     } else {
       dispatch(setNewMessage(data.message));
     }
-
     sendMessage(data, body);
   } catch (error) {
     console.error(error);
@@ -139,4 +138,8 @@ export const handleReadMessages = (body, calledFromSocket = false) => async (dis
   } catch (error) {
     console.error(error);
   }
+};
+
+export const sendTypingStatus = (status, recipientId, conversationId, senderId) => {
+  socket.emit("typing", { status, recipientId, conversationId, senderId });
 };
