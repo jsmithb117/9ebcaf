@@ -1,4 +1,7 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, {useState,
+  useEffect,
+  useMemo
+} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box } from "@material-ui/core";
 import { Input, Header, Messages } from "./index";
@@ -86,7 +89,7 @@ const ActiveChat = (props) => {
           />
           <Box className={classes.chatContainer}>
             <Messages
-              messages={conversation.messages}
+              messages={messages}
               otherUser={conversation.otherUser}
               userId={user?.id}
               latestMessageReadId={latestMessageReceivedId}
