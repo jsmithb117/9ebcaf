@@ -140,6 +140,6 @@ export const handleReadMessages = (body, calledFromSocket = false) => async (dis
   }
 };
 
-export const sendTypingStatus = (status, recipientId) => {
-  socket.emit("typing", { status, recipientId });
+export const sendTypingStatus = (status, recipientId, conversationId, senderId) => {
+  socket.emit("typing", { status, recipientId, conversationId, senderId });
 };
