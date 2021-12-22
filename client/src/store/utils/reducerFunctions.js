@@ -23,7 +23,11 @@ export const addMessageToStore = (state, payload) => {
       if (messages[messages.length - 1].id === 0) {
         messages.pop();
       }
+<<<<<<< HEAD
       convoCopy.messages = [...messages, message];
+=======
+      convoCopy.messages.push(message);
+>>>>>>> 46c952b4025fe58d227ac5a6644fed6a35744bcb
       convoCopy.latestMessageText = message.text;
       return convoCopy;
     } else {

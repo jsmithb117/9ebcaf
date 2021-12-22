@@ -4,9 +4,14 @@ import {
   addSearchedUsersToStore,
   removeOfflineUserFromStore,
   addMessageToStore,
+<<<<<<< HEAD
   setUnreadMessagesCountInStore,
   setMessagesAsReadInStore,
   setMostRecentReadMessageInStore,
+=======
+  saveLatestMessageText,
+  saveOtherUserTyping
+>>>>>>> 46c952b4025fe58d227ac5a6644fed6a35744bcb
 } from "./utils/reducerFunctions";
 
 // ACTIONS
@@ -18,9 +23,14 @@ const REMOVE_OFFLINE_USER = "REMOVE_OFFLINE_USER";
 const SET_SEARCHED_USERS = "SET_SEARCHED_USERS";
 const CLEAR_SEARCHED_USERS = "CLEAR_SEARCHED_USERS";
 const ADD_CONVERSATION = "ADD_CONVERSATION";
+<<<<<<< HEAD
 const SET_UNREAD_MESSAGE_COUNT = "SET_UNREAD_MESSAGE_COUNT";
 const SET_MESSAGES_AS_READ = "SET_MESSAGES_AS_READ";
 const SET_CONVO_RECENT_MSG ="SET_CONVO_RECENT_MSG";
+=======
+const SET_LATEST_TEXT = "SET_LATEST_TEXT";
+const SET_OTHER_USER_TYPING = "SET_OTHER_USER_TYPING";
+>>>>>>> 46c952b4025fe58d227ac5a6644fed6a35744bcb
 
 // ACTION CREATORS
 
