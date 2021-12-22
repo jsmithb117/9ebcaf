@@ -41,7 +41,7 @@ const Input = (props) => {
   };
 
   const handleTypingStatus = (status) => {
-    sendTypingStatus(status, otherUser.id);
+    sendTypingStatus(status, otherUser.id, conversationId, user.id);
   };
 
   return (
