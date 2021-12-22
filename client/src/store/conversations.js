@@ -4,6 +4,8 @@ import {
   addSearchedUsersToStore,
   removeOfflineUserFromStore,
   addMessageToStore,
+  saveLatestMessageText,
+  saveOtherUserTyping
 } from "./utils/reducerFunctions";
 
 // ACTIONS
@@ -15,6 +17,8 @@ const REMOVE_OFFLINE_USER = "REMOVE_OFFLINE_USER";
 const SET_SEARCHED_USERS = "SET_SEARCHED_USERS";
 const CLEAR_SEARCHED_USERS = "CLEAR_SEARCHED_USERS";
 const ADD_CONVERSATION = "ADD_CONVERSATION";
+const SET_LATEST_TEXT = "SET_LATEST_TEXT";
+const SET_OTHER_USER_TYPING = "SET_OTHER_USER_TYPING";
 
 // ACTION CREATORS
 
@@ -67,6 +71,23 @@ export const addConversation = (recipientId, newMessage) => {
   };
 };
 
+export const setLatestMessageText = (senderId, setAsTyping) => {
+  return {
+    type: SET_LATEST_TEXT,
+    payload: {
+      senderId,
+      setAsTyping,
+    },
+  };
+};
+
+export const setOtherUserTyping = (recipientId, status, conversationId, senderId) => {
+  return {
+    type: SET_OTHER_USER_TYPING,
+    payload: { recipientId, status, conversationId, senderId },
+  };
+};
+
 // REDUCER
 
 const reducer = (state = [], action) => {
@@ -91,6 +112,11 @@ const reducer = (state = [], action) => {
         action.payload.recipientId,
         action.payload.newMessage
       );
+    case SET_LATEST_TEXT:
+      return saveLatestMessageText(state, action.payload);
+    case SET_OTHER_USER_TYPING:
+      const newState = saveOtherUserTyping(state, action.payload);
+      return newState;
     default:
       return state;
   }
