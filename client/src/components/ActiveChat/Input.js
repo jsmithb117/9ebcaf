@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FormControl, FilledInput } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
@@ -23,6 +23,14 @@ const Input = (props) => {
   const [text, setText] = useState("");
   const { postMessage, otherUser, conversationId, user } = props;
 
+  useEffect(() => {
+    if (text.length > 0) {
+      sendTypingStatus(true, otherUser.id, conversationId, user.id);
+    } else {
+      sendTypingStatus(false, otherUser.id, conversationId, user.id);
+    }
+  }, [text]);
+
   const handleChange = (event) => {
     setText(event.target.value);
   };
@@ -40,8 +48,14 @@ const Input = (props) => {
     setText("");
   };
 
+  // only sends 'typing'(true) event if user has typed some text in the input field
   const handleTypingStatus = (status) => {
-    sendTypingStatus(status, otherUser.id, conversationId, user.id);
+    if (status && text.length > 0) {
+      sendTypingStatus(status, otherUser.id, conversationId, user.id);
+    }
+    if (!status) {
+      sendTypingStatus(status, otherUser.id, conversationId, user.id);
+    }
   };
 
   return (
