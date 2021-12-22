@@ -117,6 +117,6 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   }
 };
 
-export const sendTypingStatus = (status, recipientId) => {
-  socket.emit("typing", { status, recipientId });
+export const sendTypingStatus = (status, recipientId, conversationId, senderId) => {
+  socket.emit("typing", { status, recipientId, conversationId, senderId });
 };
