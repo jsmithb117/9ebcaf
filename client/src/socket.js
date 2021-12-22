@@ -5,7 +5,9 @@ import {
   removeOfflineUser,
   addOnlineUser,
   setUnreadMessageCount,
-  setMostRecentReadMessage
+  setMostRecentReadMessage,
+  setLatestMessageText,
+  setOtherUserTyping,
 } from "./store/conversations";
 import { handleReadMessages } from "./store/utils/thunkCreators";
 
@@ -33,6 +35,12 @@ socket.on("connect", () => {
     const mostRecentMessageId = newlyReadMessageIds[lastIndex];
     store.dispatch(setMostRecentReadMessage(conversationId, mostRecentMessageId))
     store.dispatch(handleReadMessages({ conversationId, newlyReadMessageIds }, true));
+  });
+
+  socket.on("typing", ({ status, recipientId, conversationId, senderId }) => {
+    const setAsTyping = status;
+    store.dispatch(setLatestMessageText(senderId, setAsTyping));
+    store.dispatch(setOtherUserTyping(recipientId, status, conversationId, senderId));
   });
 });
 

@@ -29,7 +29,7 @@ const Input = (props) => {
     } else {
       sendTypingStatus(false, otherUser.id, conversationId, user.id);
     }
-  }, [text]);
+  }, [text, conversationId, otherUser.id, user.id]);
 
   const handleChange = (event) => {
     setText(event.target.value);

@@ -4,14 +4,11 @@ import {
   addSearchedUsersToStore,
   removeOfflineUserFromStore,
   addMessageToStore,
-<<<<<<< HEAD
   setUnreadMessagesCountInStore,
   setMessagesAsReadInStore,
   setMostRecentReadMessageInStore,
-=======
   saveLatestMessageText,
-  saveOtherUserTyping
->>>>>>> 46c952b4025fe58d227ac5a6644fed6a35744bcb
+  saveOtherUserTyping,
 } from "./utils/reducerFunctions";
 
 // ACTIONS
@@ -23,14 +20,11 @@ const REMOVE_OFFLINE_USER = "REMOVE_OFFLINE_USER";
 const SET_SEARCHED_USERS = "SET_SEARCHED_USERS";
 const CLEAR_SEARCHED_USERS = "CLEAR_SEARCHED_USERS";
 const ADD_CONVERSATION = "ADD_CONVERSATION";
-<<<<<<< HEAD
 const SET_UNREAD_MESSAGE_COUNT = "SET_UNREAD_MESSAGE_COUNT";
 const SET_MESSAGES_AS_READ = "SET_MESSAGES_AS_READ";
-const SET_CONVO_RECENT_MSG ="SET_CONVO_RECENT_MSG";
-=======
+const SET_CONVO_RECENT_MSG = "SET_CONVO_RECENT_MSG";
 const SET_LATEST_TEXT = "SET_LATEST_TEXT";
 const SET_OTHER_USER_TYPING = "SET_OTHER_USER_TYPING";
->>>>>>> 46c952b4025fe58d227ac5a6644fed6a35744bcb
 
 // ACTION CREATORS
 
@@ -91,7 +85,7 @@ export const setUnreadMessageCount = (conversationId, unreadMessageCount) => {
 };
 
 //set message.read as true when recipient reads that message
-export const setMessagesAsRead = ( conversationId, newlyReadMessageIds ) => {
+export const setMessagesAsRead = (conversationId, newlyReadMessageIds) => {
   return {
     type: SET_MESSAGES_AS_READ,
     payload: { conversationId, newlyReadMessageIds },
@@ -102,6 +96,23 @@ export const setMostRecentReadMessage = (conversationId, messageId) => {
   return {
     type: SET_CONVO_RECENT_MSG,
     payload: { conversationId, messageId },
+  };
+};
+
+export const setLatestMessageText = (senderId, setAsTyping) => {
+  return {
+    type: SET_LATEST_TEXT,
+    payload: {
+      senderId,
+      setAsTyping,
+    },
+  };
+};
+
+export const setOtherUserTyping = (recipientId, status, conversationId, senderId) => {
+  return {
+    type: SET_OTHER_USER_TYPING,
+    payload: { recipientId, status, conversationId, senderId },
   };
 };
 
@@ -135,18 +146,23 @@ const reducer = (state = [], action) => {
         action.payload.conversationId,
         action.payload.unreadMessageCount,
       );
-      case SET_MESSAGES_AS_READ:
-        return setMessagesAsReadInStore(
-          state,
-          action.payload.conversationId,
-          action.payload.newlyReadMessageIds,
-        );
-      case SET_CONVO_RECENT_MSG:
-        return setMostRecentReadMessageInStore(
-          state,
-          action.payload.conversationId,
-          action.payload.messageId,
-        )
+    case SET_MESSAGES_AS_READ:
+      return setMessagesAsReadInStore(
+        state,
+        action.payload.conversationId,
+        action.payload.newlyReadMessageIds,
+      );
+    case SET_CONVO_RECENT_MSG:
+      return setMostRecentReadMessageInStore(
+        state,
+        action.payload.conversationId,
+        action.payload.messageId,
+      );
+    case SET_LATEST_TEXT:
+      return saveLatestMessageText(state, action.payload);
+    case SET_OTHER_USER_TYPING:
+      const newState = saveOtherUserTyping(state, action.payload);
+      return newState;
     default:
       return state;
   }
