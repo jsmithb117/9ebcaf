@@ -14,6 +14,10 @@ export const addMessageToStore = (state, payload) => {
   return state.map((convo) => {
     if (convo.id === message.conversationId) {
       const convoCopy = { ...convo };
+      const messages = convoCopy.messages;
+      if (messages[messages.length - 1].id === 0) {
+        messages.pop();
+      }
       convoCopy.messages.push(message);
       convoCopy.latestMessageText = message.text;
       return convoCopy;
@@ -28,6 +32,7 @@ export const addOnlineUserToStore = (state, id) => {
     if (convo.otherUser.id === id) {
       const convoCopy = { ...convo };
       convoCopy.otherUser.online = true;
+      convoCopy.otherUser.typing = false;
       return convoCopy;
     } else {
       return convo;
@@ -78,5 +83,45 @@ export const addNewConvoToStore = (state, recipientId, message) => {
     } else {
       return convo;
     }
+  });
+};
+
+export const saveLatestMessageText = (state, payload) => {
+  return state.map((convo) => {
+    if (convo.otherUser.id === payload.senderId) {
+      const convoCopy = { ...convo };
+
+      if (payload.setAsTyping) {
+        convoCopy.latestMessageText = "Typing...";
+      } else if (convo.messages[convo.messages.length - 1]) {
+        convoCopy.latestMessageText = convo.messages[convo.messages.length - 1].text;
+      } else {
+        convoCopy.latestMessageText = "";
+      }
+
+      return convoCopy;
+    } else {
+      return convo;
+    }
+  });
+};
+
+export const saveOtherUserTyping = (state, payload) => {
+  return state.map((convo) => {
+    if (convo.id === payload.conversationId) {
+      const convoCopy = { ...convo };
+      const messages = convoCopy.messages;
+      const lastMessagesIndex = messages.length - 1;
+      convoCopy.otherUser.typing = false;
+
+      if (payload.status) {
+        convoCopy.otherUser.typing = true;
+      }
+      if (messages[lastMessagesIndex].id === 0) {
+        convoCopy.messages[lastMessagesIndex].pop();
+      }
+      return convoCopy;
+    }
+    return convo;
   });
 };
